@@ -1,9 +1,10 @@
 import React from 'react'
+import HomePage from './pages/HomePage'
 
 const ReactkartApp = () => {
     return (
         <div>
-            <h2 style={{textAlign: 'center'}}>Reactkart App</h2>
+            <HomePage/>
         </div>
     )
 }
