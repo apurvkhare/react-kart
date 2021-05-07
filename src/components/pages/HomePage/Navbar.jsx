@@ -13,6 +13,9 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { searchProducts } from '../../../Reactkart.service';
+import { debounce } from '../../../utils/Utility'
+
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -80,6 +83,10 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
+  const debouncedSearchProducts = React.useCallback(() => debounce(searchProducts, 250), []);
+
+  const [searchValue, setSearchValue] = React.useState("");
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -99,6 +106,12 @@ export default function Navbar() {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
+  const handleChange = e => {
+    setSearchValue(e.target.value)
+    console.log(e.target.value)
+    debouncedSearchProducts(e.target.value);
+  }
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -182,7 +195,8 @@ export default function Navbar() {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-             
+              value={searchValue}
+              onChange={handleChange}
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
