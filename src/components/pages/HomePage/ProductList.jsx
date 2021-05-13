@@ -2,9 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import Skeleton from '@material-ui/lab/Skeleton'
 import Product from './Product'
-import { fetchProducts } from '../../../Reactkart.service'
-import productsReducer, {initialProductState, fetchTypes} from '../../../reducers/ProductsReducer'
-import {PRODUCTS_FETCH_FAILURE, PRODUCTS_FETCH_SUCCESS, PRODUCTS_FETCH_PENDING} from '../../../reducers/ActionTypes'
+// import { fetchData } from '../../../Reactkart.service'
+import {fetchTypes} from '../../../reducers/ProductsReducer'
+import {ProductContext} from '../../../context/ProductContext'
+// import {DATA_FETCH_FAILURE, DATA_FETCH_SUCCESS, DATA_FETCH_PENDING} from '../../../reducers/ActionTypes'
 
 const StyledProductList = styled.div`
     padding: 30px;
@@ -17,25 +18,31 @@ const StyledProductList = styled.div`
 
 const ProductList = () => {
 
-    const [state, dispatch] = React.useReducer(productsReducer, initialProductState)
+    // const [state, dispatch] = React.useReducer(dataReducer, initialState)
 
-    const fetchData = async () => {
-        dispatch({type: PRODUCTS_FETCH_PENDING});
-        const products = await fetchProducts();
-        if(products === null)
-            dispatch({type: PRODUCTS_FETCH_FAILURE})
-        else
-            dispatch({
-                type: PRODUCTS_FETCH_SUCCESS,
-                payload: {
-                    products
-                } 
-            })
-    }
+    // const products = state.data;
 
-    React.useEffect(fetchData, [])
+    // const fetchProducts = async () => {
+    //     dispatch({type: DATA_FETCH_PENDING});
+    //     const data = await fetchData("products");
+    //     if(data === null)
+    //         dispatch({type: DATA_FETCH_FAILURE})
+    //     else
+    //         dispatch({
+    //             type: DATA_FETCH_SUCCESS,
+    //             payload: {
+    //                 data
+    //             } 
+    //         })
+    // }
 
-    console.log("initial State: ", state);
+    // React.useEffect(fetchProducts, [])
+
+    // console.log("initial State: ", state);
+
+    const { state } = React.useContext(ProductContext)
+
+    const products = state.data;
 
     if(state.fetching === fetchTypes.pending){
         return <div style={{display: 'flex', gap: 100, flexWrap: 'wrap', padding: 30, justifyContent: "center", alignItems: 'center'}}>
@@ -51,7 +58,7 @@ const ProductList = () => {
 
     return (
         <StyledProductList>
-            {state.products && state.products.length !==0 && state.products.map(product => <Product key={product.id} name={product.name} price={product.price} imageUrl={product.imageUrl}/>)}
+            {products && products.length !==0 && products.map(product => <Product key={product.id} name={product.name} price={product.price} imageUrl={product.imageUrl}/>)}
         </StyledProductList>
     )
 }

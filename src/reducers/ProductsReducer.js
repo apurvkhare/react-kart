@@ -1,4 +1,4 @@
-import {PRODUCTS_FETCH_FAILURE, PRODUCTS_FETCH_SUCCESS, PRODUCTS_FETCH_PENDING} from './ActionTypes'
+import {DATA_FETCH_FAILURE, DATA_FETCH_SUCCESS, DATA_FETCH_PENDING} from './ActionTypes'
 
 export const fetchTypes = {
     idle: 'idle',
@@ -7,35 +7,34 @@ export const fetchTypes = {
     rejected: 'rejected'
 }
 
-export const initialProductState = {
-    products: [],
+export const initialState = {
+    data: [],
     fetching: fetchTypes.idle,
     error: null
 }
 
-const productsReducer =  (state = initialProductState, action) => {
-    
+const dataReducer = (state = initialState, action) => {
     switch(action.type){
-        case PRODUCTS_FETCH_PENDING: 
+        case DATA_FETCH_PENDING: 
             return{
                 ...state,
                 fetching: fetchTypes.pending
             }
 
-        case PRODUCTS_FETCH_SUCCESS:
+        case DATA_FETCH_SUCCESS:
             // eslint-disable-next-line no-case-declarations
-            const { products } = action.payload
+            const { data } = action.payload
             return{
                 ...state,
-                products,
+                data,
                 fetching: fetchTypes.resolved
             }
 
-        case PRODUCTS_FETCH_FAILURE:
+        case DATA_FETCH_FAILURE:
             return{
                 ...state,
                 fetching: fetchTypes.rejected,
-                error: "Error Fetching Products"
+                error: "Error Fetching Data"
             }
 
         default:
@@ -43,4 +42,4 @@ const productsReducer =  (state = initialProductState, action) => {
     }
 }
 
-export default productsReducer
+export default dataReducer

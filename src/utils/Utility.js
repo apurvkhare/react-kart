@@ -3,5 +3,5 @@
 // }
 
 // eslint-disable-next-line import/prefer-default-export
-export const debounce = (fn, delay=300) => () => setTimeout(fn, delay)
+export const debounce = (fn, delay=300) => (args) => setTimeout(() => fn(...args), delay)
 

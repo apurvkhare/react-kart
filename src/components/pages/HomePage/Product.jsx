@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
+import {Link, Redirect} from 'react-router-dom'
 
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
@@ -33,8 +34,13 @@ const useStyles = makeStyles(() => ({
 export default function Product({name = "IPhone 12", price = "84000", imageUrl="https://picsum.photos/200/300"}) {
   const classes = useStyles();
 
+  // const handleClick = () => {
+  //   <Redirect
+  // }
+
   return (
-    <Card className={classes.root}>
+    <Link to={{ pathname: "/product", state: {productName: name, price, imageUrl}}} >
+    <Card className={classes.root} >
       <CardHeader
         style={{paddingBottom: 0}}
         title={name}
@@ -70,5 +76,6 @@ export default function Product({name = "IPhone 12", price = "84000", imageUrl="
         </IconButton>
       </CardActions>
     </Card>
+    </Link>
   );
 }

@@ -1,26 +1,35 @@
 import commerce from './lib/commerce';
 // import { debounce } from './utils/Utility'
 
-export const fetchProducts = async () => {
-  try {
-    const productsResult = await commerce.products.list();
-    // console.log(productsResult.data);
+export const fetchData = async (dataType) => {
+  try{
+    const result = await commerce[dataType].list()
 
-    const productsData = productsResult.data.map((product) => (
-      {
-          id: product.id,
-          name: product.name,
-          price: product.price.formatted_with_symbol,
-          imageUrl: product.media.source
+    console.log("Data: ", result.data)
+
+    const data = result.data.map(dataItem => {
+      let additionalData = {}
+      if(dataType === "products"){
+        additionalData = {
+          price: dataItem.price.formatted_with_symbol,
+          imageUrl: dataItem.media.source,
+          description: dataItem.description,
+          qty: dataItem.inventory.available
+        }
       }
-    ))
+      return {
+        id: dataItem.id,
+        name: dataItem.name,
+        ...additionalData
+      }
+    })
 
-    return productsData
-  } catch (error) {
-    console.error('Error Fetching Products: ', error);
+    return data
+  }catch(error){
+    console.error('Error Fetching Categories: ', error);
     return null
   }
-};
+}
 
 export const searchProducts = async (inputSearch) => {
     try{

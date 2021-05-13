@@ -84,6 +84,7 @@ export default function Navbar() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const debouncedSearchProducts = React.useCallback(() => debounce(searchProducts, 250), []);
+  // const debouncedSearchProducts = debounce(searchProducts, 250);
 
   const [searchValue, setSearchValue] = React.useState("");
 
