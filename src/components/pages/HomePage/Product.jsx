@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import {Link, Redirect} from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
 
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
@@ -21,8 +21,8 @@ const useStyles = makeStyles(() => ({
     cursor: 'pointer',
 
     '&:hover': {
-      transform: 'scale(1.07)'
-    }
+      transform: 'scale(1.07)',
+    },
   },
   media: {
     height: 0,
@@ -31,27 +31,35 @@ const useStyles = makeStyles(() => ({
 }));
 
 // eslint-disable-next-line react/prop-types
-export default function Product({name = "IPhone 12", price = "84000", imageUrl="https://picsum.photos/200/300"}) {
+export default function Product({
+  name = 'IPhone 12',
+  price = '84000',
+  imageUrl = 'https://picsum.photos/200/300',
+  productId,
+  setIsModalOpen,
+}) {
   const classes = useStyles();
 
-  // const handleClick = () => {
-  //   <Redirect
-  // }
+  const history = useHistory();
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    setIsModalOpen(true);
+  };
+
+  const handleClick = () => {
+    history.push(`/${productId}`);
+  };
 
   return (
-    <Link to={{ pathname: "/product", state: {productName: name, price, imageUrl}}} >
-    <Card className={classes.root} >
+    <Card className={classes.root} onClick={handleClick}>
       <CardHeader
-        style={{paddingBottom: 0}}
+        style={{ paddingBottom: 0 }}
         title={name}
         subheader="by Apple"
       />
-      <CardMedia
-        className={classes.media}
-        image={imageUrl}
-        title={name}
-      />
-      <CardContent style={{paddingBottom: 0}}>
+      <CardMedia className={classes.media} image={imageUrl} title={name} />
+      <CardContent style={{ paddingBottom: 0 }}>
         <Typography variant="h6" color="textSecondary" component="p">
           {price}
         </Typography>
@@ -59,8 +67,8 @@ export default function Product({name = "IPhone 12", price = "84000", imageUrl="
           4.5/5
         </Typography>
       </CardContent>
-      <CardActions disableSpacing style={{paddingTop: 0}}>
-        <IconButton aria-label="add to favorites">
+      <CardActions disableSpacing style={{ paddingTop: 0 }}>
+        <IconButton aria-label="add to favorites" onClick={handleAddToCart}>
           <FavoriteIcon />
         </IconButton>
         <IconButton aria-label="share">
@@ -69,13 +77,13 @@ export default function Product({name = "IPhone 12", price = "84000", imageUrl="
         <IconButton
           aria-label="add-to-cart"
           style={{
-              marginLeft: 70
+            marginLeft: 70,
           }}
+          onClick={handleAddToCart}
         >
           <AddShoppingCartIcon />
         </IconButton>
       </CardActions>
     </Card>
-    </Link>
   );
 }

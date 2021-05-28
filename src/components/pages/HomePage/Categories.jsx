@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { fetchData } from '../../../Reactkart.service'
-import dataReducer, { initialState, fetchTypes } from '../../../reducers/ProductsReducer'
-import {DATA_FETCH_FAILURE, DATA_FETCH_SUCCESS, DATA_FETCH_PENDING} from '../../../reducers/ActionTypes'
+import { fetchTypes } from '../../../reducers/ProductsReducer'
+import { useFetchData } from '../../../utils/Utility';
 
 const CategoryItem = styled.div`
     font-size: 14px;
@@ -21,25 +21,9 @@ const CategoryItem = styled.div`
 
 const Categories = () => {
 
-    const [state, dispatch] = React.useReducer(dataReducer, initialState)
+    const state = useFetchData(fetchData, 'categories')
 
     const categories = state.data;
-
-    const fetchCategories = async () => {
-        dispatch({type: DATA_FETCH_PENDING});
-        const data = await fetchData("categories");
-        if(data === null)
-            dispatch({type: DATA_FETCH_FAILURE})
-        else
-            dispatch({
-                type: DATA_FETCH_SUCCESS,
-                payload: {
-                    data
-                } 
-            })
-    }
-
-    useEffect(fetchCategories, [])
 
     const categoreisStyle = {
         display: "flex",

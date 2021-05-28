@@ -14,8 +14,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { searchProducts } from '../../../Reactkart.service';
-import { debounce } from '../../../utils/Utility'
-
+import { useDebounce } from '../../../utils/Utility';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -78,18 +77,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Navbar() {
+export default function Navbar({ setFilteredProducts, setIsModalOpen }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-  const debouncedSearchProducts = React.useCallback(() => debounce(searchProducts, 250), []);
-  // const debouncedSearchProducts = debounce(searchProducts, 250);
+  const debouncedSearchProducts = useDebounce(searchProducts, 300);
 
-  const [searchValue, setSearchValue] = React.useState("");
+  const [searchValue, setSearchValue] = React.useState('');
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const handleAddToCart = () =>  setIsModalOpen(true)
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -108,11 +108,10 @@ export default function Navbar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleChange = e => {
-    setSearchValue(e.target.value)
-    console.log(e.target.value)
-    debouncedSearchProducts(e.target.value);
-  }
+  const handleChange = async (e) => {
+    setSearchValue(e.target.value);
+    debouncedSearchProducts(e.target.value, setFilteredProducts);
+  };
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -149,14 +148,6 @@ export default function Navbar() {
         </IconButton>
         <p>Messages</p>
       </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           aria-label="account of current user"
@@ -186,7 +177,7 @@ export default function Navbar() {
           <Typography className={classes.title} variant="h6">
             Reactkart
           </Typography>
-          <div className={classes.search}  style={{width: '100%'}}>
+          <div className={classes.search} style={{ width: '100%' }}>
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
@@ -203,14 +194,9 @@ export default function Navbar() {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
+            <IconButton aria-label="show 4 new mails" color="inherit" onClick={handleAddToCart}>
               <Badge badgeContent={0} color="secondary">
                 <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={0} color="secondary">
-                <NotificationsIcon />
               </Badge>
             </IconButton>
             <IconButton
@@ -242,4 +228,3 @@ export default function Navbar() {
     </div>
   );
 }
-
