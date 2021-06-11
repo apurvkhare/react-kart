@@ -10,11 +10,18 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { useHistory } from 'react-router-dom';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 import { searchProducts } from '../../../Reactkart.service';
 import { useDebounce } from '../../../utils/Utility';
+import { useAuth } from '../../../context/AuthContext';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -86,10 +93,22 @@ export default function Navbar({ setFilteredProducts, setIsModalOpen }) {
 
   const [searchValue, setSearchValue] = React.useState('');
 
+  const { currentUser, signOut, signIn } = useAuth();
+  const history = useHistory();
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
-  const handleAddToCart = () =>  setIsModalOpen(true)
+
+  const handleSnackbarClose = () => setSnackbarOpen(false);
+
+  const handleAddToCart = () => {
+    if (currentUser === null) setIsModalOpen(true);
+    else {
+      history.push('/cart');
+    }
+  };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -113,6 +132,20 @@ export default function Navbar({ setFilteredProducts, setIsModalOpen }) {
     debouncedSearchProducts(e.target.value, setFilteredProducts);
   };
 
+  const signInOut = () => {
+    if (currentUser === null) {
+      signIn();
+      setSnackbarMessage('Signed in successfully')
+    } else {
+      signOut();
+      setSnackbarMessage('Signed out successfully')
+    }
+    setSnackbarOpen(true);
+    setAnchorEl(null);
+  };
+
+  const redirectToWishlist = () => history.push('/wishlist');
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -124,8 +157,15 @@ export default function Navbar({ setFilteredProducts, setIsModalOpen }) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        {currentUser !== null ? currentUser.displayName : 'Guest User'}
+      </MenuItem>
+      {currentUser !== null && (
+        <MenuItem onClick={redirectToWishlist}>Wishlist</MenuItem>
+      )}
+      <MenuItem onClick={signInOut}>
+        {currentUser !== null ? 'Sign Out' : 'Sign In'}
+      </MenuItem>
     </Menu>
   );
 
@@ -194,7 +234,11 @@ export default function Navbar({ setFilteredProducts, setIsModalOpen }) {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit" onClick={handleAddToCart}>
+            <IconButton
+              aria-label="show 4 new mails"
+              color="inherit"
+              onClick={handleAddToCart}
+            >
               <Badge badgeContent={0} color="secondary">
                 <ShoppingCartIcon />
               </Badge>
@@ -225,6 +269,19 @@ export default function Navbar({ setFilteredProducts, setIsModalOpen }) {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={snackbarOpen}
+        autoHideDuration={2500}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

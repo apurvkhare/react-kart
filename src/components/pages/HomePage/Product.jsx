@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -9,9 +10,16 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
+import Snackbar from '@material-ui/core/Snackbar';
 import { useHistory } from 'react-router-dom';
-
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import MuiAlert from '@material-ui/lab/Alert';
+import { useAuth } from '../../../context/AuthContext';
+import { useCustomer } from '../../../context/CustomerContext'
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -42,48 +50,98 @@ export default function Product({
 
   const history = useHistory();
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const { currentUser } = useAuth();
+  const { addToCart } = useCustomer();
+
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    setIsModalOpen(true);
+    if (currentUser === null) {
+      setIsModalOpen(true);
+    } else {
+      const productData = {
+        id: productId,
+        name,
+        imgUrl: imageUrl,
+        price,
+        qty: 1
+      }
+      addToCart(productData)
+      setSnackbarMessage('Product added to Cart');
+      setSnackbarOpen(true);
+    }
   };
 
+  const handleAddToWishList = (e) => {
+    e.stopPropagation();
+    if (currentUser === null) {
+      setIsModalOpen(true);
+    } else {
+      setSnackbarMessage('Product added to wishlist');
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleSnackbarClose = () => setSnackbarOpen(false);
+
   const handleClick = () => {
-    history.push(`/${productId}`);
+    history.push(`/product/${productId}`);
   };
 
   return (
-    <Card className={classes.root} onClick={handleClick}>
-      <CardHeader
-        style={{ paddingBottom: 0 }}
-        title={name}
-        subheader="by Apple"
-      />
-      <CardMedia className={classes.media} image={imageUrl} title={name} />
-      <CardContent style={{ paddingBottom: 0 }}>
-        <Typography variant="h6" color="textSecondary" component="p">
-          {price}
-        </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          4.5/5
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing style={{ paddingTop: 0 }}>
-        <IconButton aria-label="add to favorites" onClick={handleAddToCart}>
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <IconButton
-          aria-label="add-to-cart"
-          style={{
-            marginLeft: 70,
-          }}
-          onClick={handleAddToCart}
-        >
-          <AddShoppingCartIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
+    <>
+      <Card className={classes.root} onClick={handleClick}>
+        <CardHeader
+          style={{ paddingBottom: 0 }}
+          title={name}
+          subheader="by Apple"
+        />
+        <CardMedia className={classes.media} image={imageUrl} title={name} />
+        <CardContent style={{ paddingBottom: 0 }}>
+          <Typography variant="h6" color="textSecondary" component="p">
+            {price}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" component="p">
+            4.5/5
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing style={{ paddingTop: 0 }}>
+          <IconButton
+            aria-label="add to favorites"
+            onClick={handleAddToWishList}
+          >
+            <FavoriteIcon />
+          </IconButton>
+          <IconButton aria-label="share">
+            <ShareIcon />
+          </IconButton>
+          <IconButton
+            aria-label="add-to-cart"
+            style={{
+              marginLeft: 70,
+            }}
+            onClick={handleAddToCart}
+          >
+            <AddShoppingCartIcon />
+          </IconButton>
+        </CardActions>
+      </Card>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={snackbarOpen}
+        autoHideDuration={2500}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 }

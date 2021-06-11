@@ -41,7 +41,7 @@ const ProductPage = () => {
   return (
     <StyledProductPage>
       <ProductImage imgUrl={imageUrl} />
-      <ProductDetails {...productData} />
+      <ProductDetails {...productData} imgUrl={imageUrl} />
     </StyledProductPage>
   );
 };
