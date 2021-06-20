@@ -9,29 +9,34 @@ import WishlistPage from './pages/WishlistPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import { CustomerProvider } from '../context/CustomerContext';
+import ErrorBoundary from './common/ErrorBoundary';
 
 const ReactkartApp = () => {
   return (
-    <Router>
-      <CustomerProvider>
-        <AuthProvider>
-          <Switch>
-            <Route exact path="/">
-              <HomePage />
-            </Route>
-            <Route exact path="/login">
-              <LoginPage />
-            </Route>
-            <Route exact path="/product/:productId">
-              <ProductPage />
-            </Route>
-            <PrivateRoute exact path="/wishlist" component={WishlistPage} />
-            <PrivateRoute exact path="/cart" component={CartPage} />
-            <PrivateRoute exact path="/checkout" component={CheckoutPage} />
-          </Switch>
-        </AuthProvider>
-      </CustomerProvider>
-    </Router>
+    <ErrorBoundary fallbackUI={<h3>Error occured, try refreshing</h3>}>
+      <Router>
+        <CustomerProvider>
+          <AuthProvider>
+            <Switch>
+              <Route exact path="/">
+                <ErrorBoundary fallbackUI={<h3>Error in Home Page. try refreshing</h3>}>
+                  <HomePage />
+                </ErrorBoundary>
+              </Route>
+              <Route exact path="/login">
+                <LoginPage />
+              </Route>
+              <Route exact path="/product/:productId">
+                <ProductPage />
+              </Route>
+              <PrivateRoute exact path="/wishlist" component={WishlistPage} />
+              <PrivateRoute exact path="/cart" component={CartPage} />
+              <PrivateRoute exact path="/checkout" component={CheckoutPage} />
+            </Switch>
+          </AuthProvider>
+        </CustomerProvider>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

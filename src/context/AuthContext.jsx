@@ -3,7 +3,6 @@ import { auth, provider } from '../firebase/firebase';
 import {
   CUSTOMER_CLEAR_DATA,
   CUSTOMER_SET_NAME_AND_ID,
-  CUSTOMER_SET_CART_ITEMS
 } from '../reducers/ActionTypes';
 import { useCustomer } from './CustomerContext';
 

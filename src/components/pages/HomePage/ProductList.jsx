@@ -58,6 +58,7 @@ const ProductList = ({ filteredProducts, setIsModalOpen }) => {
             productId={product.id}
             name={product.name}
             price={product.price}
+            rawPrice={product.rawPrice}
             imageUrl={product.imageUrl}
             setIsModalOpen={setIsModalOpen}
           />

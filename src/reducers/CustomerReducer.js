@@ -4,6 +4,7 @@ import {
   CUSTOMER_CLEAR_CART,
   CUSTOMER_ADD_ITEM_TO_CART,
   CUSTOMER_UPDATE_CART_ITEM_QTY,
+  CUSTOMER_SET_DELIVERY_ADDRESS,
 } from './ActionTypes';
 
 export const initialState = {
@@ -11,7 +12,7 @@ export const initialState = {
   customerName: null,
   cart: [],
   wishlist: [],
-  address: {},
+  address: '',
 };
 
 const CustomerReducer = (state = initialState, action) => {
@@ -24,6 +25,13 @@ const CustomerReducer = (state = initialState, action) => {
       };
     }
 
+    case CUSTOMER_SET_DELIVERY_ADDRESS: {
+      return {
+        ...state,
+        address: action.payload.address,
+      };
+    }
+
     case CUSTOMER_CLEAR_DATA: {
       return {
         ...state,
@@ -33,10 +41,13 @@ const CustomerReducer = (state = initialState, action) => {
 
     case CUSTOMER_ADD_ITEM_TO_CART: {
       const newCart = [...state.cart, action.payload.item];
-      localStorage.setItem('cart', JSON.stringify({
-        customerId: state.customerId,
-        cart: newCart,
-      }));
+      localStorage.setItem(
+        'cart',
+        JSON.stringify({
+          customerId: state.customerId,
+          cart: newCart,
+        })
+      );
 
       return {
         ...state,
@@ -50,10 +61,13 @@ const CustomerReducer = (state = initialState, action) => {
         return item;
       });
 
-      localStorage.setItem('cart', JSON.stringify({
-        customerId: state.customerId,
-        cart: newCart,
-      }));
+      localStorage.setItem(
+        'cart',
+        JSON.stringify({
+          customerId: state.customerId,
+          cart: newCart,
+        })
+      );
 
       return {
         ...state,

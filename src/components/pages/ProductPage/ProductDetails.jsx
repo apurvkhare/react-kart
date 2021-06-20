@@ -28,7 +28,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const ProductDetails = ({ id, imgUrl, name, price, description, qty = 10 }) => {
+const ProductDetails = ({ id, imgUrl, name, price, rawPrice, description, qty = 10 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -47,6 +47,7 @@ const ProductDetails = ({ id, imgUrl, name, price, description, qty = 10 }) => {
         name,
         imgUrl,
         price,
+        rawPrice,
         qty: 1
       }
       addToCart(productData)

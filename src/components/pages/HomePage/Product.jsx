@@ -42,6 +42,7 @@ const useStyles = makeStyles(() => ({
 export default function Product({
   name = 'IPhone 12',
   price = '84000',
+  rawPrice='',
   imageUrl = 'https://picsum.photos/200/300',
   productId,
   setIsModalOpen,
@@ -67,6 +68,7 @@ export default function Product({
         name,
         imgUrl: imageUrl,
         price,
+        rawPrice,
         qty: 1
       }
       addToCart(productData)
